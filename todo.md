@@ -1,0 +1,30 @@
+# List of things to do
+
+-   handle codes other than 200
+    -   currently handle 404s
+-   add proper failed jobs
+    -   failed jobs still count as having 'succeeded'
+    -   add failed reasons to jobs
+    -   mark failed if improper data is returned
+        -   maybe this is caused by a job failing?
+-   use custom tor container to route tor traffic
+    -   https://dev.to/nabarun/running-tor-proxy-with-docker-56n9
+-   abide by rules in robots.txt
+    -   /robots.txt
+    -   meta tag
+    -   http header
+    -   possible libs
+        -   https://www.npmjs.com/package/robots-txt-parse
+        -   https://www.npmjs.com/package/robots-txt-guard
+-   use cleanurl to clean urls??
+-   jina mongo adaptor
+    -   https://hub.jina.ai/executor/3e1sp6fp
+-   search db by hash instead of raw url?
+-   do i need to search the db now that i have the hashed url for job ids?
+-   prevent indexing interal serivces
+-   use another db besides mongo??
+    -   raven db looks good, just can only scale to 3 nodes for free
+    -   couchdb?
+-   use another queue system besides bull??
+    -   bull uses to much of redis
+    -   could use kafka?
