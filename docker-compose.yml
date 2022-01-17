@@ -10,22 +10,23 @@ services:
         restart: always
         # ports:
         #  - "27017:27017"
+        command: --wiredTigerCacheSizeGB .5
         environment:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: example
             # MONGO_INITDB_DATABASE: darksearch
 
-    mongo-express:
-        image: mongo-express
-        restart: always
-        ports:
-            - 8081:8081
-        depends_on:
-            - mongo
-        environment:
-            ME_CONFIG_MONGODB_ADMINUSERNAME: root
-            ME_CONFIG_MONGODB_ADMINPASSWORD: example
-            ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+    # mongo-express:
+    #     image: mongo-express
+    #     restart: always
+    #     ports:
+    #         - 8081:8081
+    #     depends_on:
+    #         - mongo
+    #     environment:
+    #         ME_CONFIG_MONGODB_ADMINUSERNAME: root
+    #         ME_CONFIG_MONGODB_ADMINPASSWORD: example
+    #         ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
 
     redis:
         image: 'redis:alpine'
@@ -39,12 +40,12 @@ services:
             resources:
                 limits:
                     # cpus: '0.50'
-                    memory: 3G
+                    memory: 1G
 
-    redisinsight:
-        image: redislabs/redisinsight:latest
-        ports:
-            - '8002:8001'
+    # redisinsight:
+    #     image: redislabs/redisinsight:latest
+    #     ports:
+    #         - '8002:8001'
 
     tor:
         build:
@@ -55,8 +56,8 @@ services:
 
     crawler:
         build:
-            context: ./crawler
-            dockerfile: Dockerfile
+            context: .
+            dockerfile: crawler/Dockerfile
         ports:
             - 8080:8080
         depends_on:
