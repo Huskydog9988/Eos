@@ -14,7 +14,8 @@
         "crawler"
     ],
     "scripts": {
-        "lint": "eslint 'crawler/**/*.{js,ts,tsx}' --quiet --fix"
+        "lint": "eslint 'crawler/**/*.{js,ts,tsx}' --quiet --fix",
+        "crawler": "yarn workspace crawler"
     },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^5.8.0",
