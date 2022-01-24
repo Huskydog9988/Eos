@@ -36,7 +36,7 @@ export default () => {
     });
 
     // listen for job completion
-    crawlerWorker.on('completed', async (job: Job, parsedPage: ParsedPage) => crawlerCompleted(job, parsedPage));
+    crawlerWorker.on('completed', async (job: Job, parsedPage: ParsedPage) => await crawlerCompleted(job, parsedPage));
 
     crawlerWorker.on('error', (err) => {
         // log the error

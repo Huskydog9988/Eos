@@ -8,6 +8,8 @@ import { redisConnectionConfig } from '../../config';
 export const crawlQueue = new Queue('Crawl', {
     connection: redisConnectionConfig,
     defaultJobOptions: {
+        removeOnComplete: true,
+        removeOnFail: 1000,
         attempts: 3,
         backoff: {
             type: 'exponential',

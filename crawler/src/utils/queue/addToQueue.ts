@@ -1,6 +1,7 @@
 import { crawlQueue } from '.';
-import { hashURI, logger, pageIndexed } from '..';
+import { logger, pageIndexed } from '..';
 import { parsedLink } from '../../@types/parsedLink';
+import { saveInital } from '../saveInital';
 
 /**
  * Adds item to crawler queue
@@ -15,13 +16,18 @@ export const addToCrawlQueue = async (name: string, url: string) => {
     if (!indexed) {
         // logger.debug(`Job ${name} not in db`)
 
+        // need to say we are adding to queue
+        await saveInital({ name, data: { url }, opts: { jobId: '' } });
+
+        // add to queue
         crawlQueue.add(
             name,
             { url },
             {
-                jobId: hashURI(url),
+                // jobId: hashURI(url),
             },
         );
+
         return true;
     } else {
         return false;
@@ -46,7 +52,10 @@ export const bulkAddToCrawlQueue = async (parsedLinks: parsedLink[]) => {
             // logger.debug(`Job ${parsedLink.data.url} not in db`);
 
             // set job id
-            parsedLink.opts.jobId = hashURI(parsedLink.data.url);
+            // parsedLink.opts.jobId = hashURI(parsedLink.data.url);
+
+            // need to say we are adding to queue
+            await saveInital(parsedLink);
 
             // add to array to be added to queue
             newLinks.push(parsedLink);

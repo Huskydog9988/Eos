@@ -25,7 +25,7 @@ export const parseLink = (link: string): parsedLink | void => {
                 url: link,
             },
             opts: {
-                jobId: '',
+                // jobId: '',
             },
         };
     } else {

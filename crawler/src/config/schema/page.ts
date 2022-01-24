@@ -1,22 +1,23 @@
 import mongoose, { Schema } from 'mongoose';
+import { PageScheme } from '../../@types/Page';
 
-export const pageSchema = new Schema({
+export const pageSchema = new Schema<PageScheme>({
     // url for page
-    url: { type: String, index: true, unique: true },
+    url: { type: String, index: true, unique: true, required: true },
     // url hash
-    hash: { type: String, index: true, unique: true },
+    hash: { type: String, index: true, unique: true, required: true },
     // page title
-    title: String,
+    title: { type: String, required: true },
     // page description
-    description: String,
+    description: { type: String, required: true },
     // page keywords
-    keywords: [String],
+    keywords: { type: [String], required: true },
     // number of times page has been scraped
-    scans: { type: Number, default: 1 },
+    scans: { type: Number, default: 0, required: true },
     // date of first scan
-    created: { type: Date, default: Date.now },
+    created: { type: Number, default: Date.now },
     // date if last scan
-    updated: { type: Date, default: Date.now },
+    updated: { type: Number, default: Date.now },
 });
 
-export const Page = mongoose.model('Page', pageSchema);
+export const Page = mongoose.model<PageScheme>('Page', pageSchema);

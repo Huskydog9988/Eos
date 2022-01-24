@@ -3,7 +3,7 @@ export interface parsedLink {
     data: {
         url: string;
     };
-    opts: {
-        jobId: string;
+    opts?: {
+        jobId?: string;
     };
 }
