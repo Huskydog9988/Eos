@@ -1,8 +1,9 @@
 import { createHash } from 'crypto';
 
 /**
- * Used to hash a uri
- * @param uri uri to hash
+ * Creates a hash of a URI
+ * @description Hased used as unique id for url that can be easily searched
+ * @param uri uri to be hashed
  * @returns hashed uri
  */
 export const hashURI = (uri: string) => {

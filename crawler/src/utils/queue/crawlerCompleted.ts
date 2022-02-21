@@ -1,12 +1,12 @@
 import * as Sentry from '@sentry/node';
 import { Job } from 'bullmq';
 
-import { bulkAddToCrawlQueue, hashURI, logger } from '..';
+import { bulkAddToCrawlerQueue, hashURI, logger } from '..';
 import { Page } from '../../config';
 import { ParsedPage } from '../../@types/parsedPage';
 
 /**
- * Saves the processed page to the db and added links found to the queue
+ * Saves the processed page to the db and adds links to the queue
  * @param job
  * @param parsedPage
  * @returns
@@ -22,7 +22,7 @@ export const crawlerCompleted = (job: Job, parsedPage: ParsedPage) => {
     logger.debug(`Parsed page ${parsedPage.url}`);
 
     // add all links to the queue if not disabled
-    if (!process.env.NONEWJOBS) bulkAddToCrawlQueue(parsedPage.links);
+    if (!process.env.NONEWJOBS) bulkAddToCrawlerQueue(parsedPage.links);
 
     const page = {
         url: parsedPage.url,

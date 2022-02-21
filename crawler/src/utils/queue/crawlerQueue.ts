@@ -5,7 +5,7 @@ import { redisConnectionConfig } from '../../config';
 /**
  * crawler queues
  */
-export const crawlQueue = new Queue('Crawl', {
+export const crawlerQueue = new Queue('Crawler', {
     connection: redisConnectionConfig,
     defaultJobOptions: {
         attempts: 3,
@@ -19,13 +19,13 @@ export const crawlQueue = new Queue('Crawl', {
 /**
  * crawler queue events
  */
-export const crawlEvents = new QueueEvents('Crawl', {
+export const crawlerEvents = new QueueEvents('Crawler', {
     connection: redisConnectionConfig,
 });
 
 /**
  * Reschedules jobs
  */
-export const crawlScheduler = new QueueScheduler('Crawl', {
+export const crawlerScheduler = new QueueScheduler('Crawler', {
     connection: redisConnectionConfig,
 });

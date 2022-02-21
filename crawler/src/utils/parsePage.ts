@@ -9,6 +9,11 @@ import { ParsedPage } from '../@types/parsedPage';
 // regex to get base url
 const urlRegex = new RegExp('^.+?[^/:](?=[?/]|$)');
 
+/**
+ * Parses page
+ * @param job
+ * @returns
+ */
 export async function parsePage(job: Job): Promise<void | ParsedPage> {
     const uri = job.data.url;
 

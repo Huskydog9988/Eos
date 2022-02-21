@@ -43,7 +43,7 @@ export const logger = winston.createLogger({
 
 // if not prod
 if (process.env.NODE_ENV !== 'production') {
-    // add debug messages, and print all to console
+    // enable debug messages, and print all to console
     logger.add(
         new winston.transports.Console({
             format: winston.format.combine(winston.format.colorize(), winston.format.simple()),

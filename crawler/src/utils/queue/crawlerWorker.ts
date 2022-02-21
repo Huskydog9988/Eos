@@ -5,7 +5,7 @@ import { ParsedPage } from '../../@types/parsedPage';
 import { logger, parsePage } from '..';
 
 /**
- *  Actual worker that processes items in crawl queue
+ *  Actual worker that processes items in crawler queue
  * @param job
  * @returns void or parsedPage
  */

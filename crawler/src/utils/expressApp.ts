@@ -1,4 +1,6 @@
 import express from 'express';
 
-// create express app
+/**
+ * Express app
+ */
 export const app = express();

@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/node';
 import { axiosClient, logger } from '.';
 
 /**
- * Fetches a specifed URI
+ * Fetches and returns a specifed URI
  * @param url the uri
  * @returns the reponse from axios
  */

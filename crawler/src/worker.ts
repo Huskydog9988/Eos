@@ -45,6 +45,7 @@ export default () => {
     });
 
     process.on('exit', async (code) => {
+        // force worker to exit
         await crawlerWorker.close(true);
     });
 };

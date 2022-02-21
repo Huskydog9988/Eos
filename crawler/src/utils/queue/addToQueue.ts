@@ -1,5 +1,5 @@
-import { crawlQueue } from '.';
-import { hashURI, logger, pageIndexed } from '..';
+import { crawlerQueue } from '.';
+import { hashURI, logger, isPageIndexed } from '..';
 import { parsedLink } from '../../@types/parsedLink';
 
 /**
@@ -8,14 +8,15 @@ import { parsedLink } from '../../@types/parsedLink';
  * @param url full uri to a page to be crawled
  * @returns boolean
  */
-export const addToCrawlQueue = async (name: string, url: string) => {
-    const indexed = await pageIndexed(url);
+export const addToCrawlerQueue = async (name: string, url: string) => {
+    // check if indexed
+    const indexed = await isPageIndexed(url);
 
     // if page not indexed, add to queue
     if (!indexed) {
         // logger.debug(`Job ${name} not in db`)
 
-        crawlQueue.add(
+        crawlerQueue.add(
             name,
             { url },
             {
@@ -29,17 +30,17 @@ export const addToCrawlQueue = async (name: string, url: string) => {
 };
 
 /**
- * Adds links in bulk to crawl queue
+ * Adds links in bulk to crawler queue
  * @param parsedLinks
  */
-export const bulkAddToCrawlQueue = async (parsedLinks: parsedLink[]) => {
+export const bulkAddToCrawlerQueue = async (parsedLinks: parsedLink[]) => {
     const newLinks: parsedLink[] = [];
 
     // logger.debug('Parsed links', parsedLinks);
 
     for (let i = 0; i < parsedLinks.length; i++) {
         const parsedLink = parsedLinks[i];
-        const indexed = await pageIndexed(parsedLink.data.url);
+        const indexed = await isPageIndexed(parsedLink.data.url);
 
         // if page not indexed, add to queue
         if (!indexed) {
@@ -56,7 +57,7 @@ export const bulkAddToCrawlQueue = async (parsedLinks: parsedLink[]) => {
     // logger.debug('new links', newLinks);
 
     // add items to queue
-    await crawlQueue.addBulk(newLinks);
+    await crawlerQueue.addBulk(newLinks);
 
     logger.debug(`Added ${newLinks.length} links to the queue`);
 };

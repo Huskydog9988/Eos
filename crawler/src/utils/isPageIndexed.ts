@@ -8,7 +8,7 @@ import { Page } from '../config';
  * @param url
  * @returns
  */
-export const pageIndexed = async (uri: string) => {
+export const isPageIndexed = async (uri: string) => {
     const transaction = Sentry.startTransaction({
         op: 'indexed',
         name: 'Checking if url is indexed',

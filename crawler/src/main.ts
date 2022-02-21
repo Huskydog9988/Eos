@@ -5,7 +5,7 @@ import bullmaster from 'bull-master';
 import * as Sentry from '@sentry/node';
 import helmet from 'helmet';
 
-import { app, crawlEvents, crawlQueue, logger } from './utils';
+import { app, crawlerEvents, crawlerQueue, logger } from './utils';
 
 const numCPUs = cpus().length;
 const port = process.env.PORT || 8080;
@@ -18,7 +18,7 @@ export default () => {
 
     // init bull master
     const bullMasterApp = bullmaster({
-        queues: [crawlQueue],
+        queues: [crawlerQueue],
     });
     bullMasterApp.getQueues();
 
@@ -27,12 +27,12 @@ export default () => {
     });
 
     // on completed
-    crawlEvents.on('completed', ({ jobId }) => {
+    crawlerEvents.on('completed', ({ jobId }) => {
         logger.info(`Done crawling ${jobId}`);
     });
 
     // on failed
-    crawlEvents.on('failed', ({ jobId, failedReason }) => {
+    crawlerEvents.on('failed', ({ jobId, failedReason }) => {
         logger.warning(`Error crawling ${jobId} because ${failedReason}`);
         Sentry.addBreadcrumb({
             category: 'crawl',
@@ -79,7 +79,7 @@ export default () => {
         // add starting urls
 
         (async function () {
-            crawlQueue.addBulk([
+            crawlerQueue.addBulk([
                 {
                     name: 'onionlinks',
                     data: {

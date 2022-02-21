@@ -8,6 +8,9 @@ const httpsAgent = new SocksProxyAgent(proxyOptions);
 const httpAgent = new SocksProxyAgent(proxyOptions);
 
 // create a new axios instance
+/**
+ * Customized axios client to use tor proxy
+ */
 export const axiosClient = axios.create({
     httpAgent,
     httpsAgent,

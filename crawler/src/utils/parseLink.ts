@@ -1,6 +1,11 @@
 import isURL from 'validator/lib/isURL';
 import { parsedLink } from '../@types/parsedLink';
 
+/**
+ * Parses link into an object bullmq can understand
+ * @param link link to be crawled
+ * @returns new job object for bullmq
+ */
 export const parseLink = (link: string): parsedLink | void => {
     // check if valid url
     const isValid = isURL(link, {

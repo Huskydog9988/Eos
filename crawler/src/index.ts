@@ -7,10 +7,10 @@ import main from './main';
 import { app, logger } from './utils';
 import worker from './worker';
 
-// used for debugging
+// start sentry
 Sentry.init({
     dsn: process.env.SENTRY_DSN,
-    release: `dark-search-crawler@${process.env.npm_package_version}`,
+    release: `eos-crawler@${process.env.npm_package_version}`,
     environment: process.env.NODE_ENV || 'dev',
     maxBreadcrumbs: 75,
     serverName: process.env.serverName || 'dev',
@@ -18,7 +18,7 @@ Sentry.init({
     beforeSend(event) {
         // if user
         if (event.user) {
-            // scrub any possible sensitive data
+            // scrub sensitive data
 
             // don't send email address
             delete event.user.email;
@@ -32,7 +32,6 @@ Sentry.init({
 
     // Set tracesSampleRate to 1.0 to capture 100%
     // of transactions for performance monitoring.
-    // We recommend adjusting this value in production
     tracesSampleRate: 0.5,
 
     integrations: [
