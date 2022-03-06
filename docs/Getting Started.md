@@ -22,10 +22,6 @@ Setups the Postgres for development
 yarn crawler setup
 ```
 
-## Flags
-
-Comment in/out envrioment variables like `NOADD` or `NONEWJOBS` to enable/disable various features. See their respective comments to understand what they do.
-
 ## Crawler Commands
 
 Build the crawler

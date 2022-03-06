@@ -4,6 +4,7 @@ import { Job } from 'bullmq';
 
 import { bulkAddToCrawlQueue, logger } from '..';
 import { ParsedPage } from '../../@types/parsedPage';
+import { noNewJobs } from '../../config';
 import { prisma } from '../prismaClient';
 
 /**
@@ -23,7 +24,7 @@ export const crawlerCompleted = async (job: Job, parsedPage: ParsedPage) => {
     logger.debug(`Parsed page ${parsedPage.url}`);
 
     // add all links found to the queue if not disabled
-    if (!process.env.NONEWJOBS) bulkAddToCrawlQueue(parsedPage.links);
+    if (!noNewJobs) bulkAddToCrawlQueue(parsedPage.links);
 
     // // delete page in queue db
     // prisma.queue

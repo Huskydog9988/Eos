@@ -6,6 +6,7 @@ import * as Sentry from '@sentry/node';
 import helmet from 'helmet';
 
 import { app, bulkAddToCrawlQueue, crawlEvents, crawlQueue, logger } from './utils';
+import { noInitAdd } from './config';
 
 const numCPUs = cpus().length;
 const port = process.env.PORT || 8080;
@@ -75,7 +76,7 @@ export default async () => {
     });
 
     // if init adding of urls is not disabled
-    if (!process.env.NOADD) {
+    if (!noInitAdd) {
         // add starting urls
 
         (async function () {

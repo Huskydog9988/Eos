@@ -39,7 +39,3 @@ services:
         environment:
             - SENTRY_DSN=${SENTRY_DSN}
             - NODE_ENV=dev
-            # disables init job queue adds
-            # - NOADD=true
-            # disables adding new jobs from links found
-            # - NONEWJOBS=true
