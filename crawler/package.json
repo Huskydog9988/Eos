@@ -16,7 +16,7 @@
         "start": "node dist/index.js",
         "build": "tsc",
         "dev": "yarn build && yarn start",
-        "setup": "yarn prisma db push"
+        "setup": "prisma db push && prisma generate"
     },
     "dependencies": {
         "@prisma/client": "^3.10.0",
