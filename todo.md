@@ -24,6 +24,7 @@
     -   bull uses to much resources
     -   could use kafka?
     -   nats?
+    -   nsq?
 -   use local glitchtip instead of hosted sentry?
 -   use prometheus/opentelemetry for metrics?
 -   go back to using unique jobs in bull?
