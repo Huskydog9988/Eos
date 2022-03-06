@@ -20,7 +20,7 @@ export async function getURI(uri: string): Promise<AxiosResponse<any, any>> {
     logger.debug(`Getting url ${uri}`);
 
     const response = await axiosClient.get(uri).catch((error) => {
-        if (error.response && error.response.status == 404) return;
+        if (error.response && error.response.status >= 200 && error.response.status < 300) return;
 
         logger.error('Error with axios fetching page', error);
         Sentry.captureException(error);
