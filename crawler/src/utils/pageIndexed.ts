@@ -21,13 +21,16 @@ export const pageIndexed = async (uri: string) => {
     logger.debug(`Checking if uri (${uri} exists)`);
 
     try {
-        const [inQueue, indexed] = await Promise.resolve([
-            prisma.queue.findUnique({ where: { url: uri } }),
-            prisma.page.findUnique({ where: { url: uri } }),
-        ]);
+        // const [inQueue, indexed] = await Promise.resolve([
+        //     prisma.queue.findUnique({ where: { url: uri } }),
+        //     prisma.page.findUnique({ where: { url: uri } }),
+        // ]);
+        const indexed = await prisma.queue.findUnique({ where: { url: uri } });
 
         // if not in either
-        if (inQueue !== null && indexed !== null) {
+        // if (inQueue !== null && indexed !== null) {
+        // logger.debug(`Indexed result for ${uri}`, { indexed });
+        if (indexed === null) {
             result = false;
         }
     } catch (error) {
