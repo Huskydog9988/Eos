@@ -21,7 +21,6 @@ model Queue {
 
 model HostName {
   id        Int      @id @default(autoincrement())
-  title     String?
   createdAt DateTime @default(now()) @db.Timestamp(6)
   hostname  String   @unique
   pages     Page[]
