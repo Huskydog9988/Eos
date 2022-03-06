@@ -6,7 +6,7 @@ import * as Sentry from '@sentry/node';
 import helmet from 'helmet';
 
 import { app, bulkAddToCrawlQueue, crawlEvents, crawlQueue, logger } from './utils';
-import { noInitAdd } from './config';
+import { EnableClustering, noInitAdd } from './config';
 
 const numCPUs = cpus().length;
 const port = process.env.PORT || 8080;
@@ -22,10 +22,6 @@ export default async () => {
         queues: [crawlQueue],
     });
     bullMasterApp.getQueues();
-
-    cluster.on('exit', (worker, code, signal) => {
-        logger.warn(`Worker ${worker.process.pid} died with code ${code}`);
-    });
 
     // on completed
     crawlEvents.on('completed', ({ jobId }) => {
@@ -46,9 +42,15 @@ export default async () => {
         });
     });
 
-    // Fork workers.
-    for (let i = 0; i < numCPUs; i++) {
-        cluster.fork();
+    if (EnableClustering) {
+        cluster.on('exit', (worker, code, signal) => {
+            logger.warn(`Worker ${worker.process.pid} died with code ${code}`);
+        });
+
+        // Fork workers.
+        for (let i = 0; i < numCPUs; i++) {
+            cluster.fork();
+        }
     }
 
     // RequestHandler creates a separate execution context using domains, so that every

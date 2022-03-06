@@ -6,6 +6,7 @@ import os from 'os';
 import main from './main';
 import { app, logger, prisma } from './utils';
 import worker from './worker';
+import { EnableClustering } from './config';
 
 // used for debugging
 Sentry.init({
@@ -53,13 +54,20 @@ Sentry.setTag('node', process.version);
 
 // give time for sentry to connect
 setTimeout(async () => {
-    if (cluster.isPrimary) {
-        logger.debug('Starting Dark Search Crawler');
+    if (EnableClustering) {
+        // if main worker
+        if (cluster.isPrimary) {
+            logger.debug('Starting Dark Search Crawler');
 
-        // run code for main thread
-        main();
+            // run code for main thread
+            main();
+        } else {
+            // run code for worker thread
+            worker();
+        }
     } else {
-        // run code for worker thread
+        // clustering disabled, run everything
+        main();
         worker();
     }
 }, 99);
