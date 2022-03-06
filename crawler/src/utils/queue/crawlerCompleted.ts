@@ -25,18 +25,18 @@ export const crawlerCompleted = async (job: Job, parsedPage: ParsedPage) => {
     // add all links found to the queue if not disabled
     if (!process.env.NONEWJOBS) bulkAddToCrawlQueue(parsedPage.links);
 
-    // delete page in queue db
-    prisma.queue
-        .delete({ where: { url: parsedPage.url } })
-        .then((queueItem) => {
-            logger.debug(`Deleted page in queue db`, { url: queueItem.url });
-        })
-        .catch((error) => {
-            const message = `Couldn't find page ${parsedPage.url} in queue`;
-            logger.error(message, error);
-            Sentry.captureMessage(message);
-            Sentry.captureException(error);
-        });
+    // // delete page in queue db
+    // prisma.queue
+    //     .delete({ where: { url: parsedPage.url } })
+    //     .then((queueItem) => {
+    //         logger.debug(`Deleted page in queue db`, { url: queueItem.url });
+    //     })
+    //     .catch((error) => {
+    //         const message = `Couldn't find page ${parsedPage.url} in queue`;
+    //         logger.error(message, error);
+    //         Sentry.captureMessage(message);
+    //         Sentry.captureException(error);
+    //     });
 
     // need to ignore the fact that pageData is missing items as prisma will add them for us
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -47,6 +47,18 @@ export const crawlerCompleted = async (job: Job, parsedPage: ParsedPage) => {
     if (parsedPage.description) pageData.description = parsedPage.description;
     if (parsedPage.keywords) pageData.keywords = parsedPage.keywords;
     if (parsedPage.description) pageData.description = parsedPage.description;
+
+    // prisma.hostName.upsert({
+    //     where: {
+    //         hostname: job.name,
+    //     },
+    //     create: {
+    //         hostname: job.name,
+    //     },
+    //     update: (ahh) => {
+    //         return { hostname: job.name };
+    //     },
+    // });
 
     prisma.page
         .upsert({

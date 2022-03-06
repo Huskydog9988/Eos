@@ -16,7 +16,7 @@ export const parseLink = (link: string): parsedLink | void => {
         // get the domain
         const domain = hostnameParts[hostnameParts.length - 1];
 
-        // if not an onion domain, skip its
+        // if not an onion domain, skip it
         if (domain !== 'onion') return;
 
         return {
@@ -25,7 +25,7 @@ export const parseLink = (link: string): parsedLink | void => {
                 url: link,
             },
             opts: {
-                // jobId: '',
+                jobId: link,
             },
         };
     } else {

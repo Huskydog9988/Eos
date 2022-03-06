@@ -87,6 +87,7 @@ export default async () => {
                     },
                 },
             ]);
+            logger.debug('Added inital items to queue');
         })();
     }
 };

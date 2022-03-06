@@ -1,7 +1,7 @@
 import { crawlQueue } from '.';
 import { logger, pageIndexed } from '..';
 import { parsedLink } from '../../@types/parsedLink';
-import { saveInital } from '../saveInital';
+// import { saveInital } from '../saveInital';
 
 /**
  * Adds item to crawler queue
@@ -17,10 +17,10 @@ export const addToCrawlQueue = async (name: string, url: string) => {
         // logger.debug(`Job ${name} not in db`)
 
         // need to say we are adding to queue
-        await saveInital(url);
+        // await saveInital(url);
 
         // add to queue
-        crawlQueue.add(name, { url }, {});
+        crawlQueue.add(name, { url }, { jobId: url });
 
         return true;
     } else {
@@ -41,15 +41,22 @@ export const bulkAddToCrawlQueue = async (parsedLinks: parsedLink[]) => {
         const parsedLink = parsedLinks[i];
         const indexed = await pageIndexed(parsedLink.data.url);
 
+        logger.debug(`Checking ${parsedLink.data.url}`);
+
         // if page not indexed, add to queue
         if (!indexed) {
+            logger.debug(`Not indexed ${parsedLink.data.url}`);
+
             // logger.debug(`Job ${parsedLink.data.url} not in db`);
 
             // need to say we are adding to queue
-            await saveInital(parsedLink.data.url);
+            // await saveInital(parsedLink.data.url);
 
             // add to array to be added to queue
+
             newLinks.push(parsedLink);
+        } else {
+            logger.debug(`Indexed ${parsedLink.data.url}`);
         }
     }
 
