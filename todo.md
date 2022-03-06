@@ -19,12 +19,14 @@
 -   use cleanurl to clean urls??
 -   jina mongo adaptor
     -   https://hub.jina.ai/executor/3e1sp6fp
--   search db by hash instead of raw url?
--   do i need to search the db now that i have the hashed url for job ids?
 -   prevent indexing interal serivces
--   use another db besides mongo??
-    -   raven db looks good, just can only scale to 3 nodes for free
-    -   couchdb?
 -   use another queue system besides bull??
-    -   bull uses to much of redis
+    -   bull uses to much resources
     -   could use kafka?
+    -   nats?
+-   use local glitchtip instead of hosted sentry?
+-   use prometheus/opentelemetry for metrics?
+-   go back to using unique jobs in bull?
+-   switch to go?
+    -   faster
+    -   better mq libs?
