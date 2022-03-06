@@ -1,9 +1,10 @@
+import { Page } from '@prisma/client';
 import * as Sentry from '@sentry/node';
 import { Job } from 'bullmq';
 
 import { bulkAddToCrawlQueue, logger } from '..';
-import { Page } from '../../config';
 import { ParsedPage } from '../../@types/parsedPage';
+import { prisma } from '../prismaClient';
 
 /**
  * Saves the processed page to the db and added links found to the queue
@@ -24,43 +25,44 @@ export const crawlerCompleted = async (job: Job, parsedPage: ParsedPage) => {
     // add all links found to the queue if not disabled
     if (!process.env.NONEWJOBS) bulkAddToCrawlQueue(parsedPage.links);
 
-    // const page = {
-    //     url: parsedPage.url,
-    //     hash: job.id || hashURI(parsedPage.url),
-    //     title: parsedPage.title,
-    //     description: parsedPage.description,
-    //     keywords: parsedPage.keywords,
-    // };
+    // delete page in queue db
+    prisma.queue
+        .delete({ where: { url: parsedPage.url } })
+        .then((queueItem) => {
+            logger.debug(`Deleted page in queue db`, { url: queueItem.url });
+        })
+        .catch((error) => {
+            const message = `Couldn't find page ${parsedPage.url} in queue`;
+            logger.error(message, error);
+            Sentry.captureMessage(message);
+            Sentry.captureException(error);
+        });
 
-    // find document created when first added to the queue
-    const doc = await Page.findOne({ url: parsedPage.url });
+    // need to ignore the fact that pageData is missing items as prisma will add them for us
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const pageData: Page = { url: parsedPage.url, network: 0 };
 
-    // check if it was found
-    if (doc === null || !(doc instanceof Page)) {
-        const message = `Couldn't find page ${parsedPage.url} in mongo to update`;
-        logger.error(message);
-        Sentry.captureMessage(message);
+    if (parsedPage.title) pageData.title = parsedPage.title;
+    if (parsedPage.description) pageData.description = parsedPage.description;
+    if (parsedPage.keywords) pageData.keywords = parsedPage.keywords;
+    if (parsedPage.description) pageData.description = parsedPage.description;
 
-        return;
-    }
-
-    // update page with info from latest crawl
-    doc.url = parsedPage.url;
-    doc.title = parsedPage.title;
-    doc.description = parsedPage.description;
-    doc.keywords = parsedPage.keywords;
-    doc.updated = Date.now();
-
-    // save
-    await doc.save();
-
-    // // save page to mongo
-    // Page.create(page)
-    //     .catch((error) => {
-    //         console.error(error);
-    //         Sentry.captureException(error);
-    //     })
-    //     .then(() => {
-    //         logger.debug(`Saved url ${parsedPage.url}`);
-    //     });
+    prisma.page
+        .upsert({
+            create: pageData,
+            update: {
+                ...pageData,
+                // some way to increment num of scans here?
+            },
+            where: {
+                url: parsedPage.url,
+            },
+        })
+        .catch((error) => {
+            const message = `Failed to create page for ${parsedPage.url}`;
+            logger.error(message, error);
+            Sentry.captureMessage(message);
+            Sentry.captureException(error);
+        });
 };

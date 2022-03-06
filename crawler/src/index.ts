@@ -4,7 +4,7 @@ import * as Tracing from '@sentry/tracing';
 import os from 'os';
 
 import main from './main';
-import { app, logger } from './utils';
+import { app, logger, prisma } from './utils';
 import worker from './worker';
 
 // used for debugging
@@ -36,10 +36,8 @@ Sentry.init({
     tracesSampleRate: 0.5,
 
     integrations: [
-        // enable Monog tracing
-        new Tracing.Integrations.Mongo({
-            useMongoose: true, // Default: false
-        }),
+        // enable postgres tracing
+        new Tracing.Integrations.Postgres(),
         // enable HTTP calls tracing
         new Sentry.Integrations.Http({ tracing: true }),
         // enable Express.js middleware tracing
@@ -54,7 +52,7 @@ Sentry.setTag('os', os.version() + ' ' + os.release());
 Sentry.setTag('node', process.version);
 
 // give time for sentry to connect
-setTimeout(() => {
+setTimeout(async () => {
     if (cluster.isPrimary) {
         logger.debug('Starting Dark Search Crawler');
 
@@ -88,6 +86,8 @@ process.on('beforeExit', async (code) => {
     logger.info(`Process ${process.pid} beforeExit event with code ${code}`);
     logger.end();
 
+    await prisma.$disconnect();
+
     await Sentry.close(2000);
 });
 
@@ -95,13 +95,15 @@ process.on('exit', async (code) => {
     logger.info(`Process ${process.pid} exit event with code ${code}`);
     logger.end();
 
+    await prisma.$disconnect();
+
     await Sentry.close(2000);
 });
 
 // The process will still crash even with this listener
 process.on('uncaughtExceptionMonitor', (error, origin) => {
-    logger.error('Caught an uncaught exception', { error, origin });
-    Sentry.captureException(error);
+    // logger.error('Caught an uncaught exception', { error, origin });
+    Sentry.captureException({ error, origin });
 });
 
 // process.on('multipleResolves', async (type, promise, reason) => {
@@ -116,9 +118,9 @@ process.on('uncaughtExceptionMonitor', (error, origin) => {
 //     process.exit(1);
 // });
 
-process.on('unhandledRejection', (reason, promise) => {
-    logger.error('Unhandled rejection', { promise, reason });
-});
+// process.on('unhandledRejection', (reason, promise) => {
+//     logger.error('Unhandled rejection', { promise, reason });
+// });
 
 process.on('warning', (warning) => {
     logger.warn(warning);

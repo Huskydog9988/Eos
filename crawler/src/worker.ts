@@ -1,29 +1,15 @@
 import { Job, Worker } from 'bullmq';
-import mongoose from 'mongoose';
 import * as Sentry from '@sentry/node';
 
 import { ParsedPage } from './@types/parsedPage';
-import { mongodbURL, redisConnectionConfig } from './config';
+import { redisConnectionConfig } from './config';
 import { logger, crawlerWorkerUtil, crawlerCompleted } from './utils';
-// import { Page } from './config';
 
 /**
  * Code to run on worker process
  */
-export default () => {
+export default async () => {
     logger.debug(`Worker ${process.pid} started`);
-
-    // connect to mongodb
-    mongoose.connect(mongodbURL, { autoIndex: true }).catch((error) => {
-        logger.error(error);
-        Sentry.captureException(error);
-    });
-
-    // monitor for errors
-    const db = mongoose.connection;
-    db.on('error', (...args) => {
-        logger.error('MongoDB connection error', args);
-    });
 
     // make crawler worker
     const crawlerWorker = new Worker('Crawl', async (job) => await crawlerWorkerUtil(job), {

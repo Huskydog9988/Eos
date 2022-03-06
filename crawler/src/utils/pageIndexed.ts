@@ -1,7 +1,6 @@
 import * as Sentry from '@sentry/node';
 
-import { logger } from '.';
-import { Page } from '../config';
+import { logger, prisma } from '.';
 
 /**
  * Checks if a page has been indexed
@@ -17,12 +16,22 @@ export const pageIndexed = async (uri: string) => {
         },
     });
 
-    let result = false;
+    let result = true;
+
+    logger.debug(`Checking if uri (${uri} exists)`);
 
     try {
-        result = await Page.exists({ url: uri });
+        const [inQueue, indexed] = await Promise.resolve([
+            prisma.queue.findUnique({ where: { url: uri } }),
+            prisma.page.findUnique({ where: { url: uri } }),
+        ]);
+
+        // if not in either
+        if (inQueue !== null && indexed !== null) {
+            result = false;
+        }
     } catch (error) {
-        logger.error('Error checking if uri is in db');
+        logger.error('Error checking if uri is in db', error);
         Sentry.captureException(error);
     } finally {
         transaction.finish();

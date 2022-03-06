@@ -1,41 +1,21 @@
 import * as Sentry from '@sentry/node';
-import { hashURI, logger } from '.';
-
-import { parsedLink } from '../@types/parsedLink';
-import { Page } from '../config';
+import { logger, prisma } from '.';
 
 /**
  * Used to create a 'placeholder' document for a link going to be indexed
  * @description Create placeholder so when checking if already in queue we know if the link is going to be crawled
- * @param parsedLink
+ * @param url
  */
-export const saveInital = async (parsedLink: parsedLink) => {
-    // create new document
-    const doc = new Page({
-        url: parsedLink.data.url,
-        hash: parsedLink.opts?.jobId || hashURI(parsedLink.data.url),
-        title: '',
-        description: '',
-        keywords: '',
-    });
+export const saveInital = async (url: string) => {
+    logger.debug(`Inital save of ${url}`);
 
     try {
-        // save document
-        await doc.save();
+        // save to queue db
+        await prisma.queue.create({ data: { url } });
 
-        logger.debug(`Saved url ${parsedLink.data.url}`);
+        logger.debug(`Added page to queue db ${url}`);
     } catch (error) {
-        console.error(error);
         Sentry.captureException(error);
+        logger.error(`Failed to add url to queue db`, error, { url });
     }
-
-    // // save page to mongo
-    // Page.create(page)
-    //     .catch((error) => {
-    //         console.error(error);
-    //         Sentry.captureException(error);
-    //     })
-    //     .then(() => {
-    //         logger.debug(`Saved url ${parsedLink.data.url}`);
-    //     });
 };

@@ -4,6 +4,6 @@ export * from './queue';
 export * from './logger';
 export * from './parseLink';
 export * from './pageIndexed';
-export * from './hashURI';
 export * from './expressApp';
 export * from './axiosClient';
+export * from './prismaClient';

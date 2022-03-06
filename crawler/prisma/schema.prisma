@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["extendedIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Queue {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  url       String   @unique
+
+  @@index([url], type: Hash)
+}
+
+model HostName {
+  id        Int      @id @default(autoincrement())
+  title     String?
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  hostname  String   @unique
+  pages     Page[]
+}
+
+model Page {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime  @updatedAt @db.Timestamp(6)
+  url         String    @unique
+  // urlHash     String    @unique
+  title       String?
+  description String?
+  keywords    String[]
+  scans       Int       @default(0)
+  HostName    HostName? @relation(fields: [hostNameId], references: [id])
+  hostNameId  Int?
+  // which network the page comes from
+  network     Int
+
+  @@index([url], type: Hash)
+}

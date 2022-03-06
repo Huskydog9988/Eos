@@ -17,16 +17,10 @@ export const addToCrawlQueue = async (name: string, url: string) => {
         // logger.debug(`Job ${name} not in db`)
 
         // need to say we are adding to queue
-        await saveInital({ name, data: { url }, opts: { jobId: '' } });
+        await saveInital(url);
 
         // add to queue
-        crawlQueue.add(
-            name,
-            { url },
-            {
-                // jobId: hashURI(url),
-            },
-        );
+        crawlQueue.add(name, { url }, {});
 
         return true;
     } else {
@@ -51,11 +45,8 @@ export const bulkAddToCrawlQueue = async (parsedLinks: parsedLink[]) => {
         if (!indexed) {
             // logger.debug(`Job ${parsedLink.data.url} not in db`);
 
-            // set job id
-            // parsedLink.opts.jobId = hashURI(parsedLink.data.url);
-
             // need to say we are adding to queue
-            await saveInital(parsedLink);
+            await saveInital(parsedLink.data.url);
 
             // add to array to be added to queue
             newLinks.push(parsedLink);

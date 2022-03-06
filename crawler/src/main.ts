@@ -5,7 +5,7 @@ import bullmaster from 'bull-master';
 import * as Sentry from '@sentry/node';
 import helmet from 'helmet';
 
-import { app, crawlEvents, crawlQueue, logger } from './utils';
+import { app, bulkAddToCrawlQueue, crawlEvents, crawlQueue, logger } from './utils';
 
 const numCPUs = cpus().length;
 const port = process.env.PORT || 8080;
@@ -13,8 +13,8 @@ const port = process.env.PORT || 8080;
 /**
  * Code to run on main process
  */
-export default () => {
-    logger.debug(`Primary ${process.pid} is running`);
+export default async () => {
+    logger.debug(`Master ${process.pid} is running`);
 
     // init bull master
     const bullMasterApp = bullmaster({
@@ -79,7 +79,7 @@ export default () => {
         // add starting urls
 
         (async function () {
-            crawlQueue.addBulk([
+            bulkAddToCrawlQueue([
                 {
                     name: 'onionlinks',
                     data: {
