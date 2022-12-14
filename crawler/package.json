@@ -24,7 +24,7 @@
         "bull-master": "^1.0.5",
         "bullmq": "^1.59.4",
         "cheerio": "^1.0.0-rc.10",
-        "express": "^4.17.2",
+        "express": "^4.17.3",
         "get-urls": "^10.0.1",
         "helmet": "^4.6.0",
         "meilisearch": "^0.23.0",
